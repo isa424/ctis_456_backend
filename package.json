@@ -1,0 +1,20 @@
+{
+  "name": "ctis411-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "DEBUG=ctis411-backend:*;PORT=3001 nodemon ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-fileupload": "^1.2.1",
+    "express-validator": "^6.10.0",
+    "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
