@@ -5,6 +5,7 @@ const logger = require('morgan');
 const fileUpload = require('express-fileupload');
 const {body, validationResult} = require('express-validator');
 const cors = require('cors')
+const {spawn} = require('child_process');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -51,15 +52,34 @@ app.post(
 
 		const targetPath = __dirname + "/data/" + req.files.media.name;
 
-		req.files.media.mv(targetPath, (err) => {
-			if (err) {
-				res.status(400).end();
-			}
-
-			setTimeout(() => {
-				res.download(targetPath);
-			}, 3000);
+ 
+		var dataToSend;
+		// spawn new child process to call the python script
+		const python = spawn('python', ['main.py', targetPath]);
+		// collect data from script
+		python.stdout.on('data', function (data) {
+			console.log('Pipe data from python script ...');
+			dataToSend = data.toString();
 		});
+		// in close event we are sure that stream from child process is closed
+		python.on('close', (code) => {
+			console.log(`child process close all stdio with code ${code}`);
+			// send data to browser
+	 		setTimeout(() => {
+				res.send(dataToSend);
+			 }, 8000);
+		});
+
+	// 	req.files.media.mv(targetPath, (err) => {
+	// 		if (err) {
+	// 			res.status(400).end();
+	// 		}
+
+	// 		setTimeout(() => {
+	// 			// res.download(targetPath);
+	// 			res.send(targetPath);
+	// 		}, 9000);
+	// 	});
 	}
 );
 
